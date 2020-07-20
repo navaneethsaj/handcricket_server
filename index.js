@@ -12,7 +12,7 @@ var corsOptions = {
         'http://localhost:8080',
         'http://localhost:8100',
         'http://localhost:8101',
-        'http://localhost:3200',
+        'http://localhost:3000',
         // 'https://bingo5x5.herokuapp.com',
         // 'https://bingo5x5-2.herokuapp.com'
     ],
