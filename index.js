@@ -1,3 +1,4 @@
+const PORT = process.env.PORT || 3000;
 var app = require('express')();
 var http = require('http').createServer(app);
 var io = require('socket.io')(http);
@@ -35,6 +36,6 @@ app.use('/scoreboard', scoreboard);
 app.use('/users', users);
 
 
-http.listen(3000, () => {
+http.listen(PORT, () => {
     console.log('listening on http://localhost:3000');
 });
