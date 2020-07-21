@@ -143,7 +143,7 @@ function initListeners(socket){
     try {
         playerSockets.sockets[socket.id] = {socket}
         socket.on('init', (data) => {
-            console.log(data)
+            // console.log(data)
         })
         socket.on('choice', data => {
             console.log(data, liveGames.count)
@@ -453,6 +453,7 @@ module.exports = function (io_) {
 
 
 setInterval(() => {
+    console.log('garbage collecting')
     try {
         for (let gameid in liveGames.games){
             try {
@@ -496,5 +497,6 @@ setInterval(() => {
     }catch (e) {
         console.log(e)
     }
+    console.log('garbage collected done')
 }, 1000);
 
