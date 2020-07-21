@@ -456,7 +456,7 @@ setInterval(() => {
     try {
         for (let gameid in liveGames.games){
             try {
-                if (new Date().getTime() - liveGames.games[gameid].lastPing.getTime() > 60 * 1000 * 15){
+                if (new Date().getTime() - liveGames.games[gameid].lastPing.getTime() > 1 * 1000 * 15){
                     delete liveGames.games[gameid]
                     console.log('deleted game garb collector', gameid)
                 }
