@@ -154,7 +154,7 @@ function initListeners(socket){
         })
         socket.on('gameoveraction', (data) => {
             try {
-                console.log('gameoveraction', data)
+                console.log('gameoveraction', data, liveGames.games[data.gameid])
                 liveGames.games[data.gameid].sockets.forEach(sock => {
                     sock.emit('opponentgameoveraction', data)
                 })
@@ -169,7 +169,7 @@ function initListeners(socket){
                 let move = data.move;
                 let game = liveGames.games[gameId]
                 game[playerId].moves.push(move);
-                // console.log(gameId)
+                console.log(gameId)
                 // console.log(game)
                 // return
                 if (game.batting === playerId){
