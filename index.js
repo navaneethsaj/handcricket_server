@@ -1,4 +1,5 @@
 const PORT = process.env.PORT || 3000;
+var express = require('express')
 var app = require('express')();
 var http = require('http').createServer(app);
 var io = require('socket.io')(http);
@@ -21,6 +22,7 @@ var corsOptions = {
 }
 app.use(cors(corsOptions))
 app.use(bodyParser.json())
+app.use(express.static('public'))
 var socket = require('./endpoints/gameplay')
 socket(io)
 var scoreboard = require('./endpoints/scoreboard')
