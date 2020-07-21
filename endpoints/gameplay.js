@@ -132,7 +132,7 @@ function removeFromPlayerSockets(socket) {
 function gameOverClean(gameid) {
     console.log(gameid)
     console.log('gameover clearn')
-    delete liveGames.games[gameid]
+    // delete liveGames.games[gameid]
 }
 function initListeners(socket){
     try {
