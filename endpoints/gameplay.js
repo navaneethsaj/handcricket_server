@@ -453,11 +453,11 @@ module.exports = function (io_) {
 
 
 setInterval(() => {
-    console.log('garbage collecting')
+    console.log('garbage collecting round started')
     try {
         for (let gameid in liveGames.games){
             try {
-                if (new Date().getTime() - liveGames.games[gameid].lastPing.getTime() > 1 * 1000 * 15){
+                if (new Date().getTime() - liveGames.games[gameid].lastPing.getTime() > 60 * 1000 * 15){
                     delete liveGames.games[gameid]
                     console.log('deleted game garb collector', gameid)
                 }
@@ -498,5 +498,5 @@ setInterval(() => {
         console.log(e)
     }
     console.log('garbage collected done')
-}, 1000);
+}, 1000 * 60 * 15);
 
