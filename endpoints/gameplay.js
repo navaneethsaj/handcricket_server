@@ -4,18 +4,22 @@ let counterLock = new AsyncLock();
 let counterOnlineLock = new AsyncLock();
 let waitingListLock = new AsyncLock();
 let io;
+// garbage collected at disconnect
 let playerSockets = {
     count: 0,
     sockets: {}
 }
 let liveGames = {
     count: 0,
+    // garbage collected by garb collector
     games: {},
     waiting: [],
     playingSockets: {},
 }
+// garbage collected
 let onlineUsers = { count : 0, socketsidtouser: {}, useridtosockets: {}
 }
+// garbage collected by collector
 let liveInvites = {
 
 }
@@ -49,7 +53,7 @@ function checkAndAddToWaitingList(socket, data) {
                 // console.log(waitingName, data.name)
                 let gameid = randomstring.generate();
                 liveGames.games[gameid] = {
-                    lastPing: Date(),
+                    lastPing: new Date(),
                     turn: 0,
                     sockets: [waitingMan, socket],
                     0: {moves: [], score: 0, name: waitingName},
@@ -60,8 +64,8 @@ function checkAndAddToWaitingList(socket, data) {
                 }
                 waitingMan.emit('foundgame', {gameid, playerid: 0, bet: liveGames.games[gameid].bet === 0, opponentname: data.name})
                 socket.emit('foundgame', {gameid, playerid:1, turn: 0, bet: liveGames.games[gameid].bet === 1, opponentname: waitingName})
-                liveGames.playingSockets[socket.id] = gameid;
-                liveGames.playingSockets[waitingMan.id] = gameid;
+                liveGames.playingSockets[socket.id] = {gameid, lastPing: new Date()};
+                liveGames.playingSockets[waitingMan.id] = {gameid, lastPing: new Date()};
                 // console.log(gameid)
             }
         })
@@ -105,7 +109,7 @@ function removeFromWL(socket) {
 }
 function removeFromLiveGame(socket) {
     try {
-        let gameid = liveGames.playingSockets[socket.id];
+        let gameid = liveGames.playingSockets[socket.id].gameid;
         console.log(gameid)
         if (gameid !== undefined){
             let game = liveGames.games[gameid];
@@ -134,6 +138,7 @@ function gameOverClean(gameid) {
     console.log('gameover clearn')
     // delete liveGames.games[gameid]
 }
+
 function initListeners(socket){
     try {
         playerSockets.sockets[socket.id] = {socket}
@@ -322,6 +327,7 @@ function initListenersForOnline(socket){
                 let inviteid = randomstring.generate();
                 liveInvites[inviteid] = {
                     gameSockets: tsocket,
+                    lastPing: new Date(),
                     playername
                 }
                 oppuser.socket.emit('invite', {playername, playerid, inviteid})
@@ -368,8 +374,8 @@ function initListenersForOnline(socket){
                 // playerSocks2.emit('test', 'test')
                 playerSocks1.emit('foundgame', {gameid, playerid: 0, bet: liveGames.games[gameid].bet === 0, opponentname: player2Name})
                 playerSocks2.emit('foundgame', {gameid, playerid:1, turn: 0, bet: liveGames.games[gameid].bet === 1, opponentname: player1Name})
-                liveGames.playingSockets[playerSocks1.id] = gameid;
-                liveGames.playingSockets[playerSocks2.id] = gameid;
+                liveGames.playingSockets[playerSocks1.id] = {gameid, lastPing: new Date()};
+                liveGames.playingSockets[playerSocks2.id] = {gameid, lastPing: new Date()};
             }catch (e) {
                 console.log(e)
             }
@@ -444,4 +450,51 @@ module.exports = function (io_) {
         incrementDecrementOnlineCount(true);
     });
 }
+
+
+setInterval(() => {
+    try {
+        for (let gameid in liveGames.games){
+            try {
+                if (new Date().getTime() - liveGames.games[gameid].lastPing.getTime() > 60 * 1000 * 15){
+                    delete liveGames.games[gameid]
+                    console.log('deleted game garb collector', gameid)
+                }
+            }catch (e) {
+                console.log(e)
+            }
+        }
+
+    }catch (e) {
+        console.log(e)
+    }
+    try{
+        for (let socketid in liveGames.playingSockets){
+            try {
+                if (new Date().getTime() - liveGames.playingSockets[socketid].lastPing.getTime() > 60 * 1000 * 15){
+                    delete liveGames.playingSockets[socketid]
+                    console.log('deleted livegame playing socket garb collector', socketid)
+                }
+            }catch (e) {
+                console.log(e)
+            }
+        }
+    }catch (e) {
+        console.log(e)
+    }
+    try{
+        for (let inviteid in liveInvites){
+            try {
+                if (new Date().getTime() - liveInvites[inviteid].lastPing > 60 * 1000 * 15){
+                    delete liveInvites[inviteid]
+                    console.log('deleted invite garb collector', inviteid)
+                }
+            }catch (e) {
+                console.log(e)
+            }
+        }
+    }catch (e) {
+        console.log(e)
+    }
+}, 1000);
 
