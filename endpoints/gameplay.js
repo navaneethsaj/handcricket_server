@@ -379,16 +379,21 @@ function initListenersForOnline(socket){
                 let playername = data.name;
                 let uniqueid = data.uniqueid;
                 let score = data.score;
+                let playing = false;
                 // console.log('playername', playername, uniqueid);
                 onlineUsers.socketsidtouser[socket.id].name = playername;
                 onlineUsers.socketsidtouser[socket.id].uniqueid = uniqueid;
                 onlineUsers.socketsidtouser[socket.id].score = score;
+                onlineUsers.socketsidtouser[socket.id].playing = playing;
                 onlineUsers.useridtosockets[uniqueid] = {socket, playername, score};
                 // console.log(onlineUsers)
             }catch (e) {
                 console.log(e)
             }
         });
+        socket.on('playing', data => {
+            onlineUsers.socketsidtouser[socket.id].playing = data.playing;
+        })
         socket.on('getonlineplayers', () => {
             try {
                 let users = []
