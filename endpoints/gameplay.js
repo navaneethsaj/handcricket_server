@@ -149,6 +149,15 @@ function initListeners(socket){
             console.log(data, liveGames.count)
             liveGames.count++;
         })
+        socket.on('chat', data => {
+            try {
+                liveGames.games[data.gameid].sockets.forEach(sock => {
+                    sock.emit('chat', data)
+                })
+            }catch (e) {
+                console.log(e)
+            }
+        })
         socket.on('findgame', (data) => {
             console.log('findgame', data)
             try {
