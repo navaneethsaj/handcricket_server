@@ -110,7 +110,7 @@ function removeFromWL(socket) {
 function removeFromLiveGame(socket) {
     try {
         let gameid = liveGames.playingSockets[socket.id].gameid;
-        console.log(gameid)
+        // console.log(gameid)
         if (gameid !== undefined){
             let game = liveGames.games[gameid];
             game.sockets.forEach(sock => {
@@ -146,7 +146,7 @@ function initListeners(socket){
             // console.log(data)
         })
         socket.on('choice', data => {
-            console.log(data, liveGames.count)
+            // console.log(data, liveGames.count)
             liveGames.count++;
         })
         socket.on('chat', data => {
@@ -168,7 +168,7 @@ function initListeners(socket){
         })
         socket.on('gameoveraction', (data) => {
             try {
-                console.log('gameoveraction', data, liveGames.games[data.gameid])
+                // console.log('gameoveraction', data, liveGames.games[data.gameid])
                 liveGames.games[data.gameid].sockets.forEach(sock => {
                     sock.emit('opponentgameoveraction', data)
                 })
@@ -306,8 +306,8 @@ function initListeners(socket){
 function initListenersForOnline(socket){
     try {
         // console.log(onlineUsers)
-        onlineUsers.socketsidtouser[socket.id] = {
-        }
+        onlineUsers.socketsidt
+
         // console.log(onlineUsers)
         socket.on('disconnect', () => {
             try {

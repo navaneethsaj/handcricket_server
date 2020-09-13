@@ -29,7 +29,7 @@ router.post('', function (req, res) {
             }else {
                 res.send({status: 200, result})
             }
-            console.log(result);
+            // console.log(result);
         });
     }catch(e){
         console.log(e)
@@ -54,7 +54,7 @@ router.post('/myrank', (req, res) => {
                     break;
                 }
             }
-            console.log('my rank', ranks);
+            // console.log('my rank', ranks);
             res.send({ranks: ranks, status: 200});
         })
     }catch(e){
