@@ -20,42 +20,51 @@ router.use(function timeLog (req, res, next) {
 })
 
 router.post('/register', function (req, res) {
-    let body = req.body;
-    let name = body.name;
-    let email = body.email;
-    let score = Number(body.score) || 0;
+    try{
+        let body = req.body;
+        let name = body.name;
+        let email = body.email;
+        let score = Number(body.score) || 0;
 
-    let db = mongoClient.db(dBName);
-    let myObj = { name, email, score};
-    db.collection("users").insertOne(myObj, function(err, data) {
-        if (err || data === null){
-            res.send({status: 201})
-        }else {
-            res.send({status: 200, data})
-            console.log("1 document inserted");
-        }
-    });
+        let db = mongoClient.db(dBName);
+        let myObj = { name, email, score};
+        db.collection("users").insertOne(myObj, function(err, data) {
+            if (err || data === null){
+                res.send({status: 201})
+            }else {
+                res.send({status: 200, data})
+                console.log("1 document inserted");
+            }
+        });
+    }catch(e){
+        console.log(e)
+    }
 })
 
 router.post('/updatescore', function (req, res) {
-    let body = req.body;
-    let uniqueid = ObjectId(body.uniqueid);
-    let score = body.score;
+    try{
+        let body = req.body;
+        let uniqueid = ObjectId(body.uniqueid);
+        let score = body.score;
+    
+        var dbo = mongoClient.db(dBName);
+        var myquery = {_id: uniqueid};
+        var newvalues = { $set: {score} };
+        dbo.collection("users").updateOne(myquery, newvalues, function(err, data) {
+            if (err) {
+                res.send({'status': 201})
+                return
+            }
+            if (data.matchedCount > 0){
+                res.send({'status': 200})
+            }else {
+                res.send({'status': 202})
+            }
+        });
+    }catch(e){
+        console.log(e)
+    }
 
-    var dbo = mongoClient.db(dBName);
-    var myquery = {_id: uniqueid};
-    var newvalues = { $set: {score} };
-    dbo.collection("users").updateOne(myquery, newvalues, function(err, data) {
-        if (err) {
-            res.send({'status': 201})
-            return
-        }
-        if (data.matchedCount > 0){
-            res.send({'status': 200})
-        }else {
-            res.send({'status': 202})
-        }
-    });
 })
 
 module.exports = router
