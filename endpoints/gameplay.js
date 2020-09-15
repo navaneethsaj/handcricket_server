@@ -396,6 +396,7 @@ function initListenersForOnline(socket){
                 let score = data.score;
                 let playing = false;
                 // console.log('playername', playername, uniqueid);
+                onlineUsers.socketsidtouser[socket.id] = {}
                 onlineUsers.socketsidtouser[socket.id].name = playername;
                 onlineUsers.socketsidtouser[socket.id].uniqueid = uniqueid;
                 onlineUsers.socketsidtouser[socket.id].score = score;
