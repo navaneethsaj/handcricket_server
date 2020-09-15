@@ -412,6 +412,7 @@ function initListenersForOnline(socket){
         socket.on('getonlineplayers', () => {
             try {
                 let users = []
+                console.log('usrs', onlineUsers.socketsidtouser)
                 for (let sockid in onlineUsers.socketsidtouser){
                     try{
                         let user = onlineUsers.socketsidtouser[sockid]
