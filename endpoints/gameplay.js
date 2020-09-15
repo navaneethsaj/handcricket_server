@@ -413,8 +413,12 @@ function initListenersForOnline(socket){
             try {
                 let users = []
                 for (let sockid in onlineUsers.socketsidtouser){
-                    let user = onlineUsers.socketsidtouser[sockid]
-                    users.push(user)
+                    try{
+                        let user = onlineUsers.socketsidtouser[sockid]
+                        users.push(user)
+                    }catch (e) {
+                        console.log(e)
+                    }
                 }
                 // console.log(users);
                 socket.emit('onlineplayers', users);
