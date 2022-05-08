@@ -3,6 +3,7 @@ var router = express.Router()
 var MongoClient = require('mongodb').MongoClient;
 var url = "mongodb+srv://dbUser:PeKJbo9j9PTMLKYk@cluster0.l7sqz.mongodb.net?retryWrites=true&w=majority";
 var dBName = 'UserDataBase';
+const ObjectID = require('mongodb').ObjectID;
 
 var mongoClient;
 
@@ -40,22 +41,42 @@ router.post('/myrank', (req, res) => {
     try{
         let id = req.body.uniqueid;
         const db = mongoClient.db(dBName);
-        db.collection('users').find().sort({score: -1}).toArray((err, result) => {
-            if (err){
-                console.log(err);
-                res.send({ranks: 0});
-                return
+        // db.collection('users').find().sort({score: -1}).toArray((err, result) => {
+        //     if (err){
+        //         console.log(err);
+        //         res.send({ranks: 0});
+        //         return
+        //     }
+        //     console.log('calculating myrank');
+        //     let ranks = 0;
+        //     for (const i of result){
+        //         ranks ++;
+        //         if (i._id.toString() === id){
+        //             break;
+        //         }
+        //     }
+        //     // console.log('my rank', ranks);
+        //     res.send({ranks: ranks, status: 200});
+        // })
+        db.collection('users').findOne({
+            _id: ObjectID(id)
+        }).then((result1) => {
+            let score = result1.score
+            db.collection('users').countDocuments({
+                score: {$gt: score}
             }
-            console.log('calculating myrank');
-            let ranks = 0;
-            for (const i of result){
-                ranks ++;
-                if (i._id.toString() === id){
-                    break;
+            ,(err, result2) => {
+                if (err){
+                    console.log(err)
+                    res.send({ranks: '...'})
+                    return
                 }
-            }
-            // console.log('my rank', ranks);
-            res.send({ranks: ranks, status: 200});
+                try {
+                    res.send({ranks: result2+1, status: 200})
+                } catch (error) {
+                    error_logger(error)                    
+                }
+            })
         })
     }catch(e){
         console.log(e)
