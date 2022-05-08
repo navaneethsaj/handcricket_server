@@ -28,9 +28,12 @@ socket(io)
 var scoreboard = require('./endpoints/scoreboard')
 var users = require('./endpoints/users')
 
+const startDate = new Date()
+
 app.get('/', (req, res) => {
     res.send({
-        status: "ok"
+        status: "ok",
+        runningSince: startDate
     })
 });
 
